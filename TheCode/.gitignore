@@ -10,6 +10,7 @@ coverage/
 *.iml
 .idea/
 .vscode/
+.fvm/
 
 # Local configuration, signing material and credentials
 .env
@@ -28,3 +29,7 @@ GoogleService-Info.plist
 lib/firebase_options.dart
 firebase-debug.log
 firestore-debug.log
+config/*.local.json
+lib/firebase_options_*.dart
+*.mobileprovision
+*.p8

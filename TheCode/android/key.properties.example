@@ -1,0 +1,6 @@
+# Copy to key.properties locally. Never commit actual passwords or keystores.
+# Use an absolute path with forward slashes, or a path relative to android/.
+storeFile=/absolute/path/to/upload-keystore.jks
+storePassword=REPLACE_LOCALLY
+keyAlias=upload
+keyPassword=REPLACE_LOCALLY

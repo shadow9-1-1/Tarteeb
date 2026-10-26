@@ -10,6 +10,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tarteeb/app/bootstrap.dart';
+import 'package:tarteeb/app/config/app_config.dart';
 import 'package:tarteeb/app/demo_tasks.dart';
 import 'package:tarteeb/app/tarteeb_app.dart';
 import 'package:tarteeb/features/shared/tasks/application/task_providers.dart';
@@ -103,5 +105,20 @@ void main() {
     );
     await tester.pumpAndSettle();
     await capture('error');
+
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: boundaryKey,
+        child: createApp(const AppConfig(AppEnvironment.production)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await capture('production-preview');
+
+    await tester.pumpWidget(
+      RepaintBoundary(key: boundaryKey, child: const ConfigurationErrorApp()),
+    );
+    await tester.pumpAndSettle();
+    await capture('configuration-error');
   });
 }

@@ -5,6 +5,11 @@ application (Riverpod state), domain, and data. The starter implements a read-on
 task slice to demonstrate the boundaries. Add other layers when a feature needs
 them; do not create empty controller/service abstractions.
 
+`app/config/app_config.dart` validates public development/production settings at
+bootstrap. Development injects fictional fixtures; production injects an empty
+preview repository until backend integration is implemented. Native flavors and
+`APP_ENV` must match. See [environments](environments.md) for setup and signing.
+
 ## Project map
 
 All paths below are relative to `TheCode/`, the Flutter project root. The

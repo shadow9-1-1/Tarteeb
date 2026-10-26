@@ -2,6 +2,9 @@
 
 Date: 2026-10-26. Host: Windows. Flutter 3.47.6 stable / Dart 3.13.5.
 
+This records the earlier architecture work. For the subsequent environment and
+Android flavor changes, see [environment verification](environment-verification.md).
+
 ## Project relocation and iOS scaffold
 
 The complete Flutter project now lives in `TheCode/`, including `android/`,

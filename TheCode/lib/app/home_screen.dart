@@ -4,7 +4,9 @@ import '../features/campus/presentation/campus_screen.dart';
 import '../features/personal/presentation/personal_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({required this.workspaceLabel, super.key});
+
+  final String workspaceLabel;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -19,9 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
     body: SafeArea(
       child: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(24, 8, 24, 16),
-            child: Text('Demo workspace · Sample data only'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+            child: Text(widget.workspaceLabel),
           ),
           Expanded(
             child: _selectedIndex == 0

@@ -27,8 +27,12 @@ flutter pub get
 flutter run -d chrome
 ```
 
-For Android or iOS, choose the device shown by `flutter devices` and run
-`flutter run -d <device-id>`. iOS builds require macOS and Xcode.
+For Android, choose a device from `flutter devices`, then run
+`flutter run -d <device-id> --flavor development --dart-define-from-file=config/development.json`.
+Development and production use different Android app IDs. See the
+[environment and signing guide](TheCode/docs/environments.md) for production.
+iOS builds require macOS and Xcode; use `flutter run -d <ios-device-id>` without
+an Android flavor flag.
 
 See the [project README](TheCode/README.md) for setup and checks, and the
 [architecture](TheCode/docs/architecture.md) for the layered structure.

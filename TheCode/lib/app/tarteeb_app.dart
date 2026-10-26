@@ -4,13 +4,18 @@ import '../core/theme/app_theme.dart';
 import 'home_screen.dart';
 
 class TarteebApp extends StatelessWidget {
-  const TarteebApp({super.key});
+  const TarteebApp({
+    this.workspaceLabel = 'Demo workspace · Sample data only',
+    super.key,
+  });
+
+  final String workspaceLabel;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'Tarteeb',
     debugShowCheckedModeBanner: false,
     theme: AppTheme.light,
-    home: const HomeScreen(),
+    home: HomeScreen(workspaceLabel: workspaceLabel),
   );
 }

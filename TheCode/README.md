@@ -2,16 +2,25 @@
 
 Smart Planning & Productivity Platform for Campus and Personal planning.
 
-The architecture starter runs with fictional in-memory tasks and requires no
-Firebase account, credentials, or environment files. Campus displays sample tasks;
-Personal demonstrates an empty list. Task editing and persistent storage are not
-implemented yet.
+Development runs with fictional in-memory tasks and requires no Firebase account
+or credentials. Production configuration starts an empty preview with no demo
+fixtures. Neither environment has persistent storage or task editing yet.
 
 ## Run from a fresh clone
 
-Install Flutter **3.47.6 stable** (Dart **3.13.5**, the verified SDK versions) and
-Chrome. For Android, also install the Android SDK/JDK prerequisites reported by
-`flutter doctor` and start an emulator or connect a device.
+Use Flutter **3.47.6 stable**, which includes Dart **3.13.5**. `.fvmrc` pins the
+exact Flutter release for FVM users; with an existing FVM installation, run
+`fvm install` in `TheCode/` and prefix the commands below with `fvm`. Otherwise
+install that exact SDK release and check `flutter --version`. Do not install a
+separate Dart SDK. `pubspec.yaml` bounds compatibility to Flutter 3.47.x / Dart
+3.13.x, pins direct dependencies, and `pubspec.lock` locks transitive dependencies.
+
+For Android, install Android Studio or the Android SDK with command-line tools,
+platform-tools, API 36, build-tools 36.0.0 and NDK 28.2.13676358. Use JDK 17 or a
+compatible newer JDK supported by Gradle 9.3.1. Run `flutter doctor -v`, review and
+accept Android SDK licenses locally with `flutter doctor --android-licenses`, and
+start an API 24+ emulator or connect a device with USB debugging enabled.
+The pinned Flutter SDK sets Android compile/target API 36 and minimum API 24.
 
 The complete runnable project lives in `TheCode/`. Open this folder in your IDE.
 From the repository root:
@@ -19,10 +28,23 @@ From the repository root:
 ```sh
 cd TheCode
 flutter pub get
-flutter run -d chrome
+flutter doctor -v
+flutter devices
+flutter run -d <android-device-id> --flavor development --dart-define-from-file=config/development.json
 ```
 
-For Android, use `flutter devices`, then `flutter run -d <android-device-id>`.
+Replace `<android-device-id>` with an ID from `flutter devices` (do not type the
+angle brackets). The installed app is **Tarteeb Dev**, ID `com.tarteeb.tarteeb.dev`.
+No local environment file is needed: the committed JSON contains public settings.
+
+For a quick web run with Chrome installed:
+
+```sh
+flutter run -d chrome --dart-define-from-file=config/development.json
+```
+
+See [environments and signing](docs/environments.md) for production builds,
+configuration precedence, local overrides and troubleshooting.
 Android, iOS and web scaffolds are included and share the Dart code in `lib/`.
 For iOS, use a Mac with Xcode and a configured simulator or connected device, then
 run `flutter run -d <ios-device-id>` from `TheCode`. The Xcode workspace is
@@ -38,12 +60,15 @@ Run from `TheCode/`:
 ```sh
 flutter analyze
 flutter test
-flutter build web
+flutter build apk --debug --flavor development --dart-define-from-file=config/development.json
+flutter build web --dart-define-from-file=config/production.json
 ```
 
 The tests cover real bootstrap, mode separation, immutable repository results,
 loading/error/retry behavior, stale asynchronous responses, small-screen layout,
-and dependency directions. See [verification evidence](docs/verification.md).
+and dependency directions, plus configuration validation and production fixture
+isolation. See [environment verification](docs/environment-verification.md) and
+[earlier architecture verification](docs/verification.md).
 
 ## Architecture
 
