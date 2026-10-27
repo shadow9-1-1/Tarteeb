@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/theme/app_theme.dart';
+import '../core/theme/app_tokens.dart';
 import '../features/shared/tasks/application/task_providers.dart';
 import '../features/shared/tasks/data/in_memory_task_repository.dart';
 import 'config/app_config.dart';
@@ -36,13 +38,16 @@ class ConfigurationErrorApp extends StatelessWidget {
   const ConfigurationErrorApp({super.key});
 
   @override
-  Widget build(BuildContext context) => const MaterialApp(
+  Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: Scaffold(
+    theme: AppTheme.light,
+    darkTheme: AppTheme.dark,
+    themeMode: ThemeMode.system,
+    home: const Scaffold(
       body: SafeArea(
         child: Center(
-          child: Padding(
-            padding: EdgeInsets.all(24),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(AppSpacing.page),
             child: Text(
               'This build is not configured correctly. Please contact the app team.',
             ),

@@ -56,13 +56,16 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     final boundaryKey = GlobalKey();
 
-    Future<void> mount(TaskRepository repository) => tester.pumpWidget(
+    Future<void> mount(
+      TaskRepository repository, {
+      ThemeMode themeMode = ThemeMode.system,
+    }) => tester.pumpWidget(
       RepaintBoundary(
         key: boundaryKey,
         child: ProviderScope(
           key: ObjectKey(repository),
           overrides: [taskRepositoryProvider.overrideWithValue(repository)],
-          child: const TarteebApp(),
+          child: TarteebApp(themeMode: themeMode),
         ),
       ),
     );
@@ -87,6 +90,37 @@ void main() {
           image.dispose();
         }
       });
+    }
+
+    if (const bool.fromEnvironment('THEME_SCREENSHOTS')) {
+      await mount(
+        InMemoryTaskRepository(demoTasks),
+        themeMode: ThemeMode.light,
+      );
+      await tester.pumpAndSettle();
+      await capture('theme-campus-light');
+      await mount(InMemoryTaskRepository(demoTasks), themeMode: ThemeMode.dark);
+      await tester.pumpAndSettle();
+      await capture('theme-campus-dark');
+      await tester.tap(find.text('Personal'));
+      await tester.pumpAndSettle();
+      await capture('theme-personal-dark');
+
+      tester.view.physicalSize = const Size(320, 568);
+      tester.platformDispatcher.textScaleFactorTestValue = 3;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await mount(
+        InMemoryTaskRepository(demoTasks),
+        themeMode: ThemeMode.light,
+      );
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('demo-1')),
+        100,
+      );
+      await tester.pumpAndSettle();
+      await capture('theme-large-text');
+      return;
     }
 
     await mount(InMemoryTaskRepository(demoTasks));

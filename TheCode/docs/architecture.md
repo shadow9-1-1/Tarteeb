@@ -25,7 +25,8 @@ lib/
     tarteeb_app.dart                 # MaterialApp
     home_screen.dart                # Mode navigation / app composition
   core/
-    theme/app_theme.dart            # Feature-independent UI foundation
+    theme/app_theme.dart            # Light/dark Material 3 themes
+    theme/app_tokens.dart           # Spacing, shape and elevation scales
   features/
     shared/
       tasks/
@@ -93,6 +94,9 @@ Riverpod owns asynchronous loading state and dependency injection. The app shell
 navigation index is ephemeral widget state. Providers are automatically disposed
 when their mode is no longer watched; stale results cannot populate another mode.
 `AsyncValue` distinguishes loading, data (including an empty list), and failure.
+Screens and `TaskList` render slivers inside the home scroll view so headings
+and async states remain scrollable at large text sizes. See the
+[design system](design-system.md) for theme and token usage.
 Retry invalidates just the current mode's provider and displays loading again.
 Raw exceptions and private backend details are never rendered to the user.
 

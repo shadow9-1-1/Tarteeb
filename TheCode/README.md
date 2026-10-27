@@ -72,6 +72,7 @@ isolation. See [environment verification](docs/environment-verification.md) and
 
 ## Architecture
 
+- [Material 3 theme, design tokens and reusable style usage](docs/design-system.md)
 - [Structure, dependency diagram and naming conventions](docs/architecture.md)
 - [ADR 0001: feature-first layered architecture](docs/adr/0001-feature-first-layered-architecture.md)
 - [Original requirements](../Documents/Tarteeb_SRS_v1.docx)

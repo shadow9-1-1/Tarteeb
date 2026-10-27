@@ -33,3 +33,5 @@ config/*.local.json
 lib/firebase_options_*.dart
 *.mobileprovision
 *.p8
+# Widget Preview related
+.widget_preview/
