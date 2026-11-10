@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/widgets/app_empty_state.dart';
+import '../../../../core/widgets/app_error_banner.dart';
+import '../../../../core/widgets/app_loader.dart';
 import '../application/task_providers.dart';
 import '../domain/task_mode.dart';
 
@@ -20,47 +23,28 @@ class TaskList extends ConsumerWidget {
       skipLoadingOnRefresh: false,
       loading: () => const SliverFillRemaining(
         hasScrollBody: false,
-        child: Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading tasks'),
-        ),
+        child: Center(child: AppLoader(label: 'Loading tasks')),
       ),
       error: (error, stackTrace) => SliverFillRemaining(
         hasScrollBody: false,
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.page),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.cloud_off_outlined, color: theme.colorScheme.error),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'Tasks could not be loaded. Please try again.',
-                style: theme.textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              FilledButton.icon(
-                onPressed: () => ref.invalidate(tasksProvider(mode)),
-                icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
-              ),
-            ],
+          child: Center(
+            child: AppErrorBanner(
+              message: 'Tasks could not be loaded. Please try again.',
+              actionLabel: 'Retry',
+              onAction: () => ref.invalidate(tasksProvider(mode)),
+            ),
           ),
         ),
       ),
       data: (items) {
         if (items.isEmpty) {
-          return SliverFillRemaining(
+          return const SliverFillRemaining(
             hasScrollBody: false,
             child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.page),
-                child: Text(
-                  'No tasks yet. Your plans will appear here.',
-                  style: theme.textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
-                ),
+              child: AppEmptyState(
+                message: 'No tasks yet. Your plans will appear here.',
               ),
             ),
           );

@@ -1,5 +1,8 @@
 # Material 3 theme and tokens
 
+See [shared input and feedback widgets](shared-widgets.md) for reusable buttons,
+validated fields, empty states, loaders, error banners and confirmation sheets.
+
 `lib/core/theme/app_theme.dart` owns `AppTheme.light` and `AppTheme.dark`.
 Both derive a complete semantic `ColorScheme` from the Tarteeb teal seed and use
 Material 3 typography and component defaults. `TarteebApp` follows system
