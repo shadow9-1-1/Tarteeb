@@ -1,7 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tarteeb/main.dart' as entry;
 
+import '../support/navigation.dart';
+
 void main() {
+  setUp(mockNavigationPreferences);
   // Run this file separately with production defines or mismatched native flavor
   // to verify compile-time values actually reach the real entry point.
   testWidgets('compiled configuration reaches bootstrap', (tester) async {
@@ -18,12 +21,12 @@ void main() {
       );
       expect(find.text('Campus tasks'), findsNothing);
     } else if (environment == 'production' || flavor == 'production') {
-      expect(
-        find.text('Preview workspace · Storage not connected'),
-        findsOneWidget,
-      );
+      await tester.tap(find.text('Get started'));
+      await tester.pumpAndSettle();
+      expect(find.text('Sign in to Tarteeb'), findsOneWidget);
       expect(find.text('Review lecture notes'), findsNothing);
     } else {
+      await enterDemo(tester);
       expect(find.text('Review lecture notes'), findsOneWidget);
     }
     expect(tester.takeException(), isNull);

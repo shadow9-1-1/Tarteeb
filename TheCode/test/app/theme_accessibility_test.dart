@@ -12,6 +12,8 @@ import 'package:tarteeb/features/shared/tasks/domain/task.dart';
 import 'package:tarteeb/features/shared/tasks/domain/task_mode.dart';
 import 'package:tarteeb/features/shared/tasks/domain/task_repository.dart';
 
+import '../support/navigation.dart';
+
 class _RetryRepository implements TaskRepository {
   final first = Completer<List<Task>>();
   var requests = 0;
@@ -23,11 +25,13 @@ class _RetryRepository implements TaskRepository {
   }
 }
 
-Widget _app(TaskRepository repository, {ThemeMode mode = ThemeMode.system}) =>
-    ProviderScope(
-      overrides: [taskRepositoryProvider.overrideWithValue(repository)],
-      child: TarteebApp(themeMode: mode),
-    );
+Future<Widget> _app(
+  TaskRepository repository, {
+  ThemeMode mode = ThemeMode.system,
+}) async => ProviderScope(
+  overrides: [taskRepositoryProvider.overrideWithValue(repository)],
+  child: TarteebApp(themeMode: mode, navigation: await readyNavigation()),
+);
 
 void _viewport(WidgetTester tester, Size size, double scale) {
   tester.view.physicalSize = size;
@@ -66,7 +70,7 @@ void main() {
   testWidgets('system brightness updates the shared app theme', (tester) async {
     addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
-    await tester.pumpWidget(_app(InMemoryTaskRepository([])));
+    await tester.pumpWidget(await _app(InMemoryTaskRepository([])));
     await tester.pumpAndSettle();
     expect(
       Theme.of(tester.element(find.byType(Scaffold))).colorScheme,
@@ -96,7 +100,7 @@ void main() {
               'Prepare a detailed plan for the coming week and review '
               'all outstanding tasks with the study group';
           await tester.pumpWidget(
-            _app(
+            await _app(
               InMemoryTaskRepository([
                 for (final taskMode in TaskMode.values)
                   Task(id: taskMode.name, title: title, mode: taskMode),
@@ -147,7 +151,7 @@ void main() {
       (tester) async {
         _viewport(tester, const Size(320, 568), 3);
         final repository = _RetryRepository();
-        await tester.pumpWidget(_app(repository, mode: mode));
+        await tester.pumpWidget(await _app(repository, mode: mode));
         await tester.pump(const Duration(milliseconds: 100));
         await tester.scrollUntilVisible(
           find.byType(CircularProgressIndicator),

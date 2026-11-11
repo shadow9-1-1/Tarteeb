@@ -22,7 +22,8 @@ lib/
   app/
     bootstrap.dart                  # Selects repositories through overrides
     demo_tasks.dart                 # Fictional startup fixtures
-    tarteeb_app.dart                 # MaterialApp
+    tarteeb_app.dart                 # MaterialApp.router / router lifetime
+    routing/                        # Routes, access gates and UI preferences
     home_screen.dart                # Mode navigation / app composition
   core/
     theme/app_theme.dart            # Light/dark Material 3 themes
@@ -90,9 +91,11 @@ filters by mode and returns immutable lists. Both screens invoke the same
 `TaskList(mode: ...)` and `tasksProvider(mode)` family. Mode is a query parameter,
 not a reason to clone task models, providers, repositories, or widgets.
 
-Riverpod owns asynchronous loading state and dependency injection. The app shell's
-navigation index is ephemeral widget state. Providers are automatically disposed
-when their mode is no longer watched; stale results cannot populate another mode.
+Riverpod owns asynchronous loading state and dependency injection. GoRouter owns
+the selected mode and independent branch navigators. Visited mode branches stay
+mounted, retaining their providers and scroll state until logout removes the
+shell; stale results cannot populate another mode. See [navigation](navigation.md)
+for guards, onboarding and launch restoration.
 `AsyncValue` distinguishes loading, data (including an empty list), and failure.
 Screens and `TaskList` render slivers inside the home scroll view so headings
 and async states remain scrollable at large text sizes. See the

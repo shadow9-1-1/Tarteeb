@@ -8,6 +8,7 @@ import '../features/shared/tasks/application/task_providers.dart';
 import '../features/shared/tasks/data/in_memory_task_repository.dart';
 import 'config/app_config.dart';
 import 'demo_tasks.dart';
+import 'routing/navigation_controller.dart';
 import 'tarteeb_app.dart';
 
 /// The composition root selects infrastructure. Features only see contracts.
@@ -23,16 +24,21 @@ void bootstrap() {
   }
 }
 
-/// Production has no demo fixtures and remains an empty preview until persistence
-/// is implemented. No build silently connects to a Firebase project.
-Widget createApp(AppConfig config) => ProviderScope(
-  overrides: [
-    taskRepositoryProvider.overrideWith(
-      (ref) => InMemoryTaskRepository(config.useDemoData ? demoTasks : []),
-    ),
-  ],
-  child: TarteebApp(workspaceLabel: config.workspaceLabel),
-);
+/// Production has no demo fixtures and stays signed out until an authentication
+/// adapter is injected. No build silently connects to a Firebase project.
+Widget createApp(AppConfig config, {NavigationController? navigation}) =>
+    ProviderScope(
+      overrides: [
+        taskRepositoryProvider.overrideWith(
+          (ref) => InMemoryTaskRepository(config.useDemoData ? demoTasks : []),
+        ),
+      ],
+      child: TarteebApp(
+        workspaceLabel: config.workspaceLabel,
+        demoAccessEnabled: config.useDemoData,
+        navigation: navigation,
+      ),
+    );
 
 class ConfigurationErrorApp extends StatelessWidget {
   const ConfigurationErrorApp({super.key});

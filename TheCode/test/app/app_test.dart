@@ -12,6 +12,8 @@ import 'package:tarteeb/features/shared/tasks/domain/task_mode.dart';
 import 'package:tarteeb/features/shared/tasks/domain/task_repository.dart';
 import 'package:tarteeb/main.dart' as entry;
 
+import '../support/navigation.dart';
+
 class CallbackTaskRepository implements TaskRepository {
   CallbackTaskRepository(this.fetch);
   final Future<List<Task>> Function(TaskMode) fetch;
@@ -20,17 +22,18 @@ class CallbackTaskRepository implements TaskRepository {
   Future<List<Task>> fetchTasks(TaskMode mode) => fetch(mode);
 }
 
-Widget appWith(TaskRepository repository) => ProviderScope(
+Future<Widget> appWith(TaskRepository repository) async => ProviderScope(
   overrides: [taskRepositoryProvider.overrideWithValue(repository)],
-  child: const TarteebApp(),
+  child: TarteebApp(navigation: await readyNavigation()),
 );
 
 void main() {
+  setUp(mockNavigationPreferences);
   testWidgets('default entry starts without Firebase and switches modes', (
     tester,
   ) async {
     entry.main();
-    await tester.pumpAndSettle();
+    await enterDemo(tester);
     expect(find.text('Campus tasks'), findsOneWidget);
     expect(find.text('Review lecture notes'), findsOneWidget);
     await tester.tap(find.text('Personal'));
@@ -56,7 +59,7 @@ void main() {
       calls++;
       return calls == 1 ? firstRequest.future : retryRequest.future;
     });
-    await tester.pumpWidget(appWith(repository));
+    await tester.pumpWidget(await appWith(repository));
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
     firstRequest.completeError(StateError('Private backend details'));
     await tester.pumpAndSettle();
@@ -88,7 +91,7 @@ void main() {
         const Task(id: 'p', title: 'Personal plan', mode: TaskMode.personal),
       ];
     });
-    await tester.pumpWidget(appWith(repository));
+    await tester.pumpWidget(await appWith(repository));
     await tester.tap(find.text('Personal'));
     await tester.pumpAndSettle();
     campus.complete([
@@ -108,7 +111,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    await tester.pumpWidget(appWith(InMemoryTaskRepository(demoTasks)));
+    await tester.pumpWidget(await appWith(InMemoryTaskRepository(demoTasks)));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     await tester.tap(find.text('Personal'));

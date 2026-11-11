@@ -1,54 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../core/theme/app_tokens.dart';
-import '../features/campus/presentation/campus_screen.dart';
-import '../features/personal/presentation/personal_screen.dart';
+import '../core/widgets/app_error_banner.dart';
+import 'routing/navigation_controller.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({required this.workspaceLabel, super.key});
-
-  final String workspaceLabel;
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+/// Two mode branches keep independent navigation and scroll state.
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({required this.shell, required this.navigation, super.key});
+  final StatefulNavigationShell shell;
+  final NavigationController navigation;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(title: const Text('Tarteeb')),
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: navigation,
+    builder: (context, _) => Scaffold(
+      appBar: AppBar(
+        title: const Text('Tarteeb'),
+        actions: [
+          IconButton(
+            tooltip: 'Sign out',
+            icon: const Icon(Icons.logout),
+            onPressed: navigation.busy ? null : navigation.signOut,
+          ),
+        ],
+      ),
       body: SafeArea(
-        child: CustomScrollView(
-          key: ValueKey(_selectedIndex),
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.page,
-                  AppSpacing.sm,
-                  AppSpacing.page,
-                  AppSpacing.md,
-                ),
-                child: Text(
-                  widget.workspaceLabel,
-                  style: theme.textTheme.bodyMedium!.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
+        child: Column(
+          children: [
+            if (navigation.errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                child: AppErrorBanner(message: navigation.errorMessage!),
               ),
-            ),
-            _selectedIndex == 0 ? const CampusScreen() : const PersonalScreen(),
+            Expanded(child: shell),
           ],
         ),
       ),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
+        selectedIndex: shell.currentIndex,
         onDestinationSelected: (index) =>
-            setState(() => _selectedIndex = index),
+            shell.goBranch(index, initialLocation: index == shell.currentIndex),
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.school_outlined),
@@ -60,6 +52,43 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
+class ModeWorkspace extends StatelessWidget {
+  const ModeWorkspace({
+    required this.workspaceLabel,
+    required this.mode,
+    required this.child,
+    super.key,
+  });
+  final String workspaceLabel;
+  final String mode;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => CustomScrollView(
+    key: PageStorageKey(mode),
+    restorationId: '${mode}Scroll',
+    slivers: [
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.page,
+            AppSpacing.sm,
+            AppSpacing.page,
+            AppSpacing.md,
+          ),
+          child: Text(
+            workspaceLabel,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ),
+      child,
+    ],
+  );
 }

@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tarteeb/app/bootstrap.dart';
 import 'package:tarteeb/app/config/app_config.dart';
 
+import '../support/navigation.dart';
+
 void main() {
   test('no configuration starts a credential-free development build', () {
     expect(AppConfig.parse().useDemoData, isTrue);
@@ -47,7 +49,10 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      createApp(const AppConfig(AppEnvironment.production)),
+      createApp(
+        const AppConfig(AppEnvironment.production),
+        navigation: await readyNavigation(),
+      ),
     );
     await tester.pumpAndSettle();
     expect(

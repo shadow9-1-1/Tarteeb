@@ -20,6 +20,8 @@ import 'package:tarteeb/features/shared/tasks/domain/task.dart';
 import 'package:tarteeb/features/shared/tasks/domain/task_mode.dart';
 import 'package:tarteeb/features/shared/tasks/domain/task_repository.dart';
 
+import '../test/support/navigation.dart';
+
 class _PendingRepository implements TaskRepository {
   final result = Completer<List<Task>>();
 
@@ -59,13 +61,16 @@ void main() {
     Future<void> mount(
       TaskRepository repository, {
       ThemeMode themeMode = ThemeMode.system,
-    }) => tester.pumpWidget(
+    }) async => tester.pumpWidget(
       RepaintBoundary(
         key: boundaryKey,
         child: ProviderScope(
           key: ObjectKey(repository),
           overrides: [taskRepositoryProvider.overrideWithValue(repository)],
-          child: TarteebApp(themeMode: themeMode),
+          child: TarteebApp(
+            themeMode: themeMode,
+            navigation: await readyNavigation(),
+          ),
         ),
       ),
     );
@@ -143,7 +148,10 @@ void main() {
     await tester.pumpWidget(
       RepaintBoundary(
         key: boundaryKey,
-        child: createApp(const AppConfig(AppEnvironment.production)),
+        child: createApp(
+          const AppConfig(AppEnvironment.production),
+          navigation: await readyNavigation(),
+        ),
       ),
     );
     await tester.pumpAndSettle();

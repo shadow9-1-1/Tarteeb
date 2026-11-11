@@ -76,8 +76,9 @@ never fall back to the debug key. Without a signing file, Gradle has no release
 signing configuration: an APK may be unsigned and a signed publishing workflow
 cannot complete. A present but incomplete signing file fails with the missing
 property name, not its secret value. Release signing and Play Store publication
-have not been verified or performed. Production is still an empty preview, not a
-finished product connected to a live service.
+have not been verified or performed. Production now remains at the guarded
+sign-in screen until real authentication is connected; its task repository is
+still an empty in-memory preview. See [navigation](navigation.md).
 
 ## Reproducibility and credentials
 
