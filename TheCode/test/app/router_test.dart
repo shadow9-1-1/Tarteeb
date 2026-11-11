@@ -106,7 +106,8 @@ void main() {
       expect(find.text('Welcome to Tarteeb'), findsOneWidget);
       router(tester).go('/sign-in?from=%2Fpersonal');
       await tester.pumpAndSettle();
-      expect(find.text('Welcome to Tarteeb'), findsOneWidget);
+      expect(find.text('Sign in to Tarteeb'), findsOneWidget);
+      expect(repository.calls, isEmpty);
       await enterDemo(tester);
       expect(find.text('Personal tasks'), findsOneWidget);
       expect(store.snapshot.onboarded, isTrue);
@@ -255,16 +256,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Welcome to Tarteeb'), findsOneWidget);
       store.fail = true;
-      await tester.tap(find.text('Get started'));
-      await tester.pumpAndSettle();
+      await finishIntroduction(tester, mode: 'Personal');
       expect(
         find.text('Your setup could not be saved. Please try again.'),
         findsOneWidget,
       );
       expect(navigation.onboarded, isFalse);
       store.fail = false;
-      await tester.tap(find.text('Get started'));
-      await tester.pumpAndSettle();
+      await tapVisible(tester, find.text('Continue with Personal'));
       expect(find.text('Personal tasks'), findsOneWidget);
     },
   );

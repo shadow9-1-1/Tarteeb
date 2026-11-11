@@ -3,7 +3,8 @@
 Smart Planning & Productivity Platform for Campus and Personal planning.
 
 Development runs with fictional in-memory tasks and requires no Firebase account
-or credentials. First launch shows onboarding, then **Enter demo workspace**.
+or credentials. First launch offers welcome, privacy/notification explanations,
+mode selection and a sample dashboard, then **Enter demo workspace**.
 Production has no demo fixtures and remains at sign-in until real authentication
 is connected. Onboarding and the last mode are saved locally; tasks still have
 no persistent storage or editing. See [routing and access](docs/navigation.md).
@@ -74,6 +75,7 @@ isolation. See [environment verification](docs/environment-verification.md) and
 
 ## Architecture
 
+- [Phase 1 onboarding demo, screen previews and verification](docs/phase-1-onboarding.md)
 - [GoRouter routes, access guards and launch restoration](docs/navigation.md)
 - [Material 3 theme, design tokens and reusable style usage](docs/design-system.md)
 - [Shared input and feedback widgets: variants, validation and accessibility](docs/shared-widgets.md)

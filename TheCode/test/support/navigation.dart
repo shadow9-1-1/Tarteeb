@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:tarteeb/app/routing/auth_session.dart';
@@ -77,12 +79,45 @@ void mockNavigationPreferences() {
       InMemorySharedPreferencesAsync.empty();
 }
 
+Future<void> tapVisible(WidgetTester tester, Finder finder) async {
+  await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
+  await tester.tap(finder);
+  await tester.pumpAndSettle();
+}
+
+Future<void> finishIntroduction(WidgetTester tester, {String? mode}) async {
+  await tester.pumpAndSettle();
+  final uri = GoRouter.of(tester.element(find.byType(Scaffold)))
+      .routeInformationProvider
+      .value
+      .uri;
+  final selected =
+      mode ??
+      (uri.queryParameters['from'] == '/personal' ||
+              uri.path == '/preview/personal'
+          ? 'Personal'
+          : 'Campus');
+  if (find.text('Get started').evaluate().isNotEmpty) {
+    await tapVisible(tester, find.text('Get started'));
+  }
+  if (find.text('Choose your space').evaluate().isNotEmpty) {
+    await tapVisible(tester, find.text('Choose your space'));
+  }
+  if (find.text('Choose your starting space').evaluate().isNotEmpty) {
+    await tapVisible(tester, find.bySemanticsLabel('Preview $selected'));
+  }
+  await tapVisible(tester, find.text('Continue with $selected'));
+}
+
 Future<void> enterDemo(WidgetTester tester) async {
   await tester.pumpAndSettle();
   if (find.text('Get started').evaluate().isNotEmpty) {
-    await tester.tap(find.text('Get started'));
-    await tester.pumpAndSettle();
+    await finishIntroduction(tester);
   }
-  await tester.tap(find.text('Enter demo workspace'));
-  await tester.pumpAndSettle();
+  await tapVisible(tester, find.text('Enter demo workspace'));
+  if (find.text('Choose your space').evaluate().isNotEmpty) {
+    await finishIntroduction(tester);
+    await tapVisible(tester, find.text('Enter demo workspace'));
+  }
 }

@@ -7,7 +7,12 @@ owns the router for its widget lifetime and renders `MaterialApp.router`.
 | Name | Path | Purpose |
 | --- | --- | --- |
 | `launch` | `/launch` | Wait for navigation preferences and authentication restoration |
-| `onboarding` | `/onboarding` | First-use introduction and persisted completion |
+| `onboarding` | `/onboarding` | Welcome and account entry points |
+| `privacy` | `/onboarding/privacy` | Privacy and notification explanations |
+| `chooseMode` | `/onboarding/mode` | Campus and Personal choices |
+| `campusPreview` | `/preview/campus` | Public fictional Campus dashboard |
+| `personalPreview` | `/preview/personal` | Public fictional Personal dashboard |
+| `register` | `/register` | Registration entry, with account creation explicitly unavailable |
 | `signIn` | `/sign-in` | Session entry; demo access only in development |
 | `campus` | `/campus` | Protected Campus task workspace |
 | `personal` | `/personal` | Protected Personal task workspace |
@@ -21,8 +26,10 @@ Unknown routes have a page-not-found view with a safe home action.
 The top-level redirect runs before protected screens build:
 
 1. Until preferences and `AuthSession.restore()` finish, show the launch screen.
-2. If onboarding is incomplete, show onboarding.
-3. If the session is unauthenticated, show sign-in.
+2. If onboarding is incomplete, protected requests go to welcome. The public
+   introduction, registration, sign-in and static previews remain reachable.
+3. If onboarding is complete but the session is unauthenticated, protected
+   requests go to sign-in. Public previews remain available without signing in.
 4. Once both gates pass, open the requested mode or the saved mode (Campus by
    default). Authenticated users visiting public entry routes return to a mode.
 
@@ -30,7 +37,10 @@ A known requested destination travels through the gates in the `from` query
 parameter. Only local `/campus` and `/personal` destinations are accepted;
 external URLs, protocol-relative URLs, traversal paths, and unknown paths cannot
 be used as return destinations. These routes currently have no query-driven
-screen state, so only the canonical mode path is retained.
+screen state, so only the canonical mode path is retained. Public entry paths
+are preserved across startup with a separately allowlisted `next` value. The
+preview's Continue action saves onboarding completion and the chosen mode
+together before proceeding to sign-in. See [Phase 1 onboarding](phase-1-onboarding.md).
 
 `NavigationController` listens to the session and supplies GoRouter's
 `refreshListenable`. Sign-out or session expiry redirects immediately and removes

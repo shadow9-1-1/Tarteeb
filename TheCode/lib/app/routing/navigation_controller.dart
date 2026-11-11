@@ -47,8 +47,11 @@ class NavigationController extends ChangeNotifier {
     return initialize();
   }
 
-  Future<void> completeOnboarding() => _perform(() async {
-    final next = NavigationSnapshot(onboarded: true, location: lastLocation);
+  Future<void> completeOnboarding({String? location}) => _perform(() async {
+    final next = NavigationSnapshot(
+      onboarded: true,
+      location: AppRoutes.destination(location) ?? lastLocation,
+    );
     await _save(next);
     _snapshot = next;
   }, 'Your setup could not be saved. Please try again.');

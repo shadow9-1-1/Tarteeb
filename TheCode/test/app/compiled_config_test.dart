@@ -21,8 +21,7 @@ void main() {
       );
       expect(find.text('Campus tasks'), findsNothing);
     } else if (environment == 'production' || flavor == 'production') {
-      await tester.tap(find.text('Get started'));
-      await tester.pumpAndSettle();
+      await finishIntroduction(tester);
       expect(find.text('Sign in to Tarteeb'), findsOneWidget);
       expect(find.text('Review lecture notes'), findsNothing);
     } else {

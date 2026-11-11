@@ -14,6 +14,7 @@ import 'package:tarteeb/app/bootstrap.dart';
 import 'package:tarteeb/app/config/app_config.dart';
 import 'package:tarteeb/app/demo_tasks.dart';
 import 'package:tarteeb/app/tarteeb_app.dart';
+import 'package:tarteeb/app/routing/app_routes.dart';
 import 'package:tarteeb/features/shared/tasks/application/task_providers.dart';
 import 'package:tarteeb/features/shared/tasks/data/in_memory_task_repository.dart';
 import 'package:tarteeb/features/shared/tasks/domain/task.dart';
@@ -95,6 +96,40 @@ void main() {
           image.dispose();
         }
       });
+    }
+
+    if (const bool.fromEnvironment('ONBOARDING_SCREENSHOTS')) {
+      // A taller viewport documents the scrollable content, not a device capture.
+      tester.view.physicalSize = const Size(390, 1040);
+      for (final (name, path) in [
+        ('welcome', AppRoutes.onboardingPath),
+        ('privacy', AppRoutes.privacyPath),
+        ('mode-selection', AppRoutes.chooseModePath),
+        ('campus-preview', AppRoutes.campusPreviewPath),
+        ('personal-preview', AppRoutes.personalPreviewPath),
+        ('sign-in', AppRoutes.signInPath),
+        ('registration', AppRoutes.registerPath),
+      ]) {
+        final navigation = testNavigation(
+          auth: TestAuthSession(authenticated: false),
+          store: MemoryNavigationStore(),
+        );
+        await tester.pumpWidget(
+          RepaintBoundary(
+            key: boundaryKey,
+            child: TarteebApp(
+              key: ObjectKey(navigation),
+              navigation: navigation,
+              demoAccessEnabled: true,
+              initialLocation: path,
+              themeMode: ThemeMode.light,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await capture('onboarding-$name');
+      }
+      return;
     }
 
     if (const bool.fromEnvironment('THEME_SCREENSHOTS')) {
