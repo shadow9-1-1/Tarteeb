@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/widgets/app_empty_state.dart';
 import '../../features/campus/presentation/campus_screen.dart';
+import '../../features/campus/presentation/campus_tasks_screen.dart';
 import '../../features/personal/presentation/personal_screen.dart';
 import '../../features/onboarding/presentation/welcome_screen.dart';
 import '../../features/onboarding/presentation/privacy_screen.dart';
@@ -242,6 +243,43 @@ GoRouter createAppRouter({
             GoRoute(
               name: AppRoutes.campus,
               path: AppRoutes.campusPath,
+              routes: [
+                for (final section in [
+                  'classes',
+                  'deadlines',
+                  'courses',
+                  'resources',
+                  'tasks',
+                ])
+                  GoRoute(
+                    name: 'campus-$section',
+                    path: section,
+                    builder: (context, state) => ModeWorkspace(
+                      workspaceLabel: workspaceLabel,
+                      mode: 'campus-$section',
+                      child: section == 'tasks'
+                          ? const CampusTasksScreen()
+                          : CampusScreen(section: section),
+                    ),
+                    routes: section == 'courses'
+                        ? [
+                            GoRoute(
+                              name: 'campus-course',
+                              path: ':courseId',
+                              builder: (context, state) => ModeWorkspace(
+                                workspaceLabel: workspaceLabel,
+                                mode:
+                                    'course-${state.pathParameters['courseId']}',
+                                child: CampusScreen(
+                                  section: 'course',
+                                  courseId: state.pathParameters['courseId'],
+                                ),
+                              ),
+                            ),
+                          ]
+                        : [],
+                  ),
+              ],
               builder: (context, state) => ModeWorkspace(
                 workspaceLabel: workspaceLabel,
                 mode: 'campus',

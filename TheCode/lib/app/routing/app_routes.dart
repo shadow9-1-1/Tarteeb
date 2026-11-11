@@ -55,6 +55,11 @@ abstract final class AppRoutes {
   static String? destination(String? value) {
     final uri = value == null ? null : Uri.tryParse(value);
     if (uri == null || uri.hasScheme || uri.hasAuthority) return null;
+    if (RegExp(r'^/campus/(classes|deadlines|courses|resources|tasks)$')
+            .hasMatch(uri.path) ||
+        RegExp(r'^/campus/courses/[a-z0-9-]+$').hasMatch(uri.path)) {
+      return uri.path;
+    }
     return switch (uri.path) {
       campusPath => campusPath,
       personalPath => personalPath,

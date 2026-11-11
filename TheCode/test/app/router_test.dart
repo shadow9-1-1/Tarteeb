@@ -121,7 +121,9 @@ void main() {
   ) async {
     final navigation = await readyNavigation();
     final repository = RecordingRepository();
-    await tester.pumpWidget(app(navigation, repository: repository));
+    await tester.pumpWidget(
+      app(navigation, repository: repository, location: '/campus/tasks'),
+    );
     await tester.pumpAndSettle();
     expect(router(tester).namedLocation(AppRoutes.campus), '/campus');
     expect(router(tester).namedLocation(AppRoutes.personal), '/personal');

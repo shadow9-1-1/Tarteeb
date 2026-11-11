@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/theme/app_theme.dart';
 import '../core/theme/app_tokens.dart';
 import '../features/shared/tasks/application/task_providers.dart';
+import '../features/campus/application/campus_providers.dart';
+import '../features/campus/domain/campus_data.dart';
 import '../features/shared/tasks/data/in_memory_task_repository.dart';
 import 'config/app_config.dart';
 import 'demo_tasks.dart';
@@ -29,6 +31,9 @@ void bootstrap() {
 Widget createApp(AppConfig config, {NavigationController? navigation}) =>
     ProviderScope(
       overrides: [
+        campusSourceProvider.overrideWithValue(
+          () async => config.useDemoData ? sampleCampus : const CampusData(),
+        ),
         taskRepositoryProvider.overrideWith(
           (ref) => InMemoryTaskRepository(config.useDemoData ? demoTasks : []),
         ),

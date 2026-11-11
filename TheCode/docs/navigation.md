@@ -14,7 +14,10 @@ owns the router for its widget lifetime and renders `MaterialApp.router`.
 | `personalPreview` | `/preview/personal` | Public fictional Personal dashboard |
 | `register` | `/register` | Registration entry, with account creation explicitly unavailable |
 | `signIn` | `/sign-in` | Session entry; demo access only in development |
-| `campus` | `/campus` | Protected Campus task workspace |
+| `campus` | `/campus` | Protected Campus dashboard |
+| `campus-classes`, `campus-deadlines`, `campus-courses` | `/campus/classes`, `/campus/deadlines`, `/campus/courses` | Full Campus collections |
+| `campus-course` | `/campus/courses/:courseId` | Course detail |
+| `campus-tasks`, `campus-resources` | `/campus/tasks`, `/campus/resources` | Task list and resource placeholder |
 | `personal` | `/personal` | Protected Personal task workspace |
 
 `/` resolves to the appropriate launch destination. Use
@@ -34,10 +37,11 @@ The top-level redirect runs before protected screens build:
    default). Authenticated users visiting public entry routes return to a mode.
 
 A known requested destination travels through the gates in the `from` query
-parameter. Only local `/campus` and `/personal` destinations are accepted;
+parameter. Only local `/campus`, `/personal`, and the listed Campus child destinations are accepted;
 external URLs, protocol-relative URLs, traversal paths, and unknown paths cannot
 be used as return destinations. These routes currently have no query-driven
-screen state, so only the canonical mode path is retained. Public entry paths
+screen state, so only the canonical path is retained. Course IDs use lowercase
+letters, digits and hyphens; unknown IDs show a course-not-found state. Public entry paths
 are preserved across startup with a separately allowlisted `next` value. The
 preview's Continue action saves onboarding completion and the chosen mode
 together before proceeding to sign-in. See [Phase 1 onboarding](phase-1-onboarding.md).
@@ -87,7 +91,7 @@ released. No extra product tabs are invented for features that are not built yet
 ## Relaunch and process restoration
 
 `PreferencesNavigationStore` uses `SharedPreferencesAsync` to store one versioned
-JSON snapshot: onboarding completion and the last successfully navigated mode.
+JSON snapshot: onboarding completion and the last successfully navigated route.
 Development and production have separate keys. Unknown/corrupt saved routes fall
 back to Campus; malformed JSON falls back to a fresh onboarding snapshot. Writes
 are serialized so rapid switching cannot let an older write win. Preference
@@ -98,6 +102,7 @@ On a fresh launch:
 
 - An explicit supported deep link takes precedence over the saved mode.
 - Without a deep link, restore the last mode after the session gates pass.
+  Campus child routes restore their matching detail or collection screen.
 - A missing/expired session always requires sign-in first, even when a protected
   mode was saved. A valid backend session can proceed immediately after restore.
 

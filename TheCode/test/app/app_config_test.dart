@@ -60,6 +60,8 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Review lecture notes'), findsNothing);
+    expect(find.text('Prototyping workshop'), findsNothing);
+    await tapVisible(tester, find.text('Campus tasks'));
     expect(
       find.text('No tasks yet. Your plans will appear here.'),
       findsOneWidget,

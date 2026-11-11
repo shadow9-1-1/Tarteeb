@@ -26,7 +26,7 @@ void main() {
       expect(find.text('Review lecture notes'), findsNothing);
     } else {
       await enterDemo(tester);
-      expect(find.text('Review lecture notes'), findsOneWidget);
+      expect(find.text('Prototyping workshop'), findsOneWidget);
     }
     expect(tester.takeException(), isNull);
   });

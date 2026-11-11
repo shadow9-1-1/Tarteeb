@@ -15,6 +15,8 @@ import 'package:tarteeb/app/config/app_config.dart';
 import 'package:tarteeb/app/demo_tasks.dart';
 import 'package:tarteeb/app/tarteeb_app.dart';
 import 'package:tarteeb/app/routing/app_routes.dart';
+import 'package:tarteeb/features/campus/application/campus_providers.dart';
+import 'package:tarteeb/features/campus/domain/campus_data.dart';
 import 'package:tarteeb/features/shared/tasks/application/task_providers.dart';
 import 'package:tarteeb/features/shared/tasks/data/in_memory_task_repository.dart';
 import 'package:tarteeb/features/shared/tasks/domain/task.dart';
@@ -70,6 +72,7 @@ void main() {
           overrides: [taskRepositoryProvider.overrideWithValue(repository)],
           child: TarteebApp(
             themeMode: themeMode,
+            initialLocation: '/campus/tasks',
             navigation: await readyNavigation(),
           ),
         ),
@@ -96,6 +99,56 @@ void main() {
           image.dispose();
         }
       });
+    }
+
+    if (const bool.fromEnvironment('CAMPUS_SCREENSHOTS')) {
+      for (final (name, size, path, theme) in [
+        ('dashboard-mobile', const Size(390, 1800), '/campus', ThemeMode.light),
+        (
+          'dashboard-desktop',
+          const Size(1280, 1100),
+          '/campus',
+          ThemeMode.light,
+        ),
+        ('dashboard-dark', const Size(390, 1800), '/campus', ThemeMode.dark),
+        (
+          'course',
+          const Size(390, 1400),
+          '/campus/courses/software',
+          ThemeMode.light,
+        ),
+        ('empty', const Size(390, 844), '/campus/resources', ThemeMode.light),
+        ('loading', const Size(390, 844), '/campus', ThemeMode.light),
+      ]) {
+        tester.view.physicalSize = size;
+        final navigation = await readyNavigation();
+        await tester.pumpWidget(
+          RepaintBoundary(
+            key: boundaryKey,
+            child: ProviderScope(
+              key: ObjectKey(navigation),
+              overrides: [
+                if (name == 'loading')
+                  campusSourceProvider.overrideWithValue(
+                    () => Completer<CampusData>().future,
+                  ),
+              ],
+              child: TarteebApp(
+                navigation: navigation,
+                initialLocation: path,
+                themeMode: theme,
+              ),
+            ),
+          ),
+        );
+        if (name == 'loading') {
+          await tester.pump(const Duration(milliseconds: 200));
+        } else {
+          await tester.pumpAndSettle();
+        }
+        await capture('campus-$name');
+      }
+      return;
     }
 
     if (const bool.fromEnvironment('ONBOARDING_SCREENSHOTS')) {

@@ -86,9 +86,7 @@ void main() {
         expect(find.text('Sign in to Tarteeb'), findsOneWidget);
         await tapVisible(tester, find.text('Enter demo workspace'));
         expect(find.text('$mode tasks'), findsOneWidget);
-        expect(tasks.calls, [
-          mode == 'Campus' ? TaskMode.campus : TaskMode.personal,
-        ]);
+        expect(tasks.calls, mode == 'Campus' ? isEmpty : [TaskMode.personal]);
         expect(tester.takeException(), isNull);
       },
     );

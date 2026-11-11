@@ -30,7 +30,11 @@ Future<Widget> _app(
   ThemeMode mode = ThemeMode.system,
 }) async => ProviderScope(
   overrides: [taskRepositoryProvider.overrideWithValue(repository)],
-  child: TarteebApp(themeMode: mode, navigation: await readyNavigation()),
+  child: TarteebApp(
+    themeMode: mode,
+    navigation: await readyNavigation(),
+    initialLocation: '/campus/tasks',
+  ),
 );
 
 void _viewport(WidgetTester tester, Size size, double scale) {

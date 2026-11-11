@@ -31,7 +31,8 @@ Run `flutter run -d chrome --dart-define-from-file=config/development.json` from
    are saved together. A storage failure keeps the preview open with a retryable
    message and does not claim setup is complete.
 6. Select **Enter demo workspace** to open the protected **Personal tasks** screen
-   with the Personal bottom tab selected. Repeat with Campus to see Campus tasks.
+   with the Personal bottom tab selected. Repeat with Campus to see the Campus dashboard.
+   Its Campus tasks action opens the original task list.
 
 The real Personal demo workspace currently starts empty; the preview is explicitly
 fictional and does not add its sample plans to the repository. Campus and Personal

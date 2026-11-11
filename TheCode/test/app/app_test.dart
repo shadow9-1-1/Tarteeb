@@ -24,7 +24,10 @@ class CallbackTaskRepository implements TaskRepository {
 
 Future<Widget> appWith(TaskRepository repository) async => ProviderScope(
   overrides: [taskRepositoryProvider.overrideWithValue(repository)],
-  child: TarteebApp(navigation: await readyNavigation()),
+  child: TarteebApp(
+    navigation: await readyNavigation(),
+    initialLocation: '/campus/tasks',
+  ),
 );
 
 void main() {
@@ -34,6 +37,8 @@ void main() {
   ) async {
     entry.main();
     await enterDemo(tester);
+    expect(find.text('Your campus day'), findsOneWidget);
+    await tapVisible(tester, find.text('Campus tasks'));
     expect(find.text('Campus tasks'), findsOneWidget);
     expect(find.text('Review lecture notes'), findsOneWidget);
     await tester.tap(find.text('Personal'));

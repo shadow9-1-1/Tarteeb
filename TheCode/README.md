@@ -76,6 +76,7 @@ isolation. See [environment verification](docs/environment-verification.md) and
 ## Architecture
 
 - [Phase 1 onboarding demo, screen previews and verification](docs/phase-1-onboarding.md)
+- [Phase 1 Campus dashboard, mock data and screen previews](docs/phase-1-campus.md)
 - [GoRouter routes, access guards and launch restoration](docs/navigation.md)
 - [Material 3 theme, design tokens and reusable style usage](docs/design-system.md)
 - [Shared input and feedback widgets: variants, validation and accessibility](docs/shared-widgets.md)
